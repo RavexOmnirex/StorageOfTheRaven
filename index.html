@@ -3,24 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JOHN MATTEO D. BAÑOZA PORFOLIO</title>
+<title>JOHN MATTEO D. BAÑOZA PORTFOLIO</title>
 <link rel="stylesheet" href="thisone.css">
 <base target="_blank">
 </head>
 <body>
 
-<!-- CRT SCANLINE OVERLAY -->
 <div class="scanlines"></div>
 <div class="vignette"></div>
 
-<!-- ============ PAGE TRANSITION GLITCH BARS ============ -->
+<!-- PAGE TRANSITION -->
 <div class="transition-overlay" id="transition">
   <div class="t-bar"></div><div class="t-bar"></div><div class="t-bar"></div>
   <div class="t-bar"></div><div class="t-bar"></div><div class="t-bar"></div>
   <div class="t-label" id="tLabel">LOADING SECTOR...</div>
 </div>
 
-<!-- ============ BOOT INTRO ============ -->
+<!-- BOOT INTRO -->
 <div class="boot-intro" id="bootIntro">
   <div class="boot-box">
     <div class="terminal-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span> JMB://2077 — SYSTEM BOOT</div>
@@ -31,8 +30,8 @@
   </div>
 </div>
 
-<!-- ============ NAV ============ -->
-<nav class="nav" id="mainNav" style="display:none">
+<!-- NAV (only shown on About / Skills / Projects) -->
+<nav class="nav is-hidden" id="mainNav">
   <div class="nav-logo">JMB://<span>2077</span></div>
   <ul class="nav-links">
     <li><a data-page="hero">Home</a></li>
@@ -43,7 +42,7 @@
   </ul>
 </nav>
 
-<!-- ============ PAGE: HERO ============ -->
+<!-- PAGE: HERO -->
 <main id="page-hero" class="page active">
   <header class="hero">
     <canvas id="matrix"></canvas>
@@ -66,7 +65,7 @@
   </header>
 </main>
 
-<!-- ============ PAGE: ABOUT ============ -->
+<!-- PAGE: ABOUT -->
 <main id="page-about" class="page">
   <section class="section">
     <h2 class="section-title glitch" data-text="ABOUT ME">ABOUT ME</h2>
@@ -94,7 +93,7 @@
   </section>
 </main>
 
-<!-- ============ PAGE: SKILLS ============ -->
+<!-- PAGE: SKILLS -->
 <main id="page-skills" class="page">
   <section class="section">
     <h2 class="section-title glitch" data-text="KEY SKILLS">KEY SKILLS</h2>
@@ -196,7 +195,7 @@
   </section>
 </main>
 
-<!-- ============ PAGE: PROJECTS ============ -->
+<!-- PAGE: PROJECTS -->
 <main id="page-projects" class="page">
   <section class="section">
     <h2 class="section-title glitch" data-text="PROJECTS">PROJECTS</h2>
@@ -236,13 +235,13 @@
   </section>
 </main>
 
-<!-- ============ PAGE: CONNECT ============ -->
+<!-- PAGE: CONNECT (Email + Phone lead to the warning page) -->
 <main id="page-connect" class="page">
   <section class="section">
     <h2 class="section-title glitch" data-text="CONNECT WITH ME">CONNECT WITH ME</h2>
     <p class="section-sub">// ESTABLISH UPLINK</p>
     <div class="connect-grid">
-      <a href="mailto:johnmatteobanoza@gmail.com" class="connect-card reveal">
+      <a class="connect-card reveal" data-page="warning">
         <div class="connect-icon">@</div>
         <h3>EMAIL</h3>
         <p>johnmatteobanoza@gmail.com</p>
@@ -254,7 +253,7 @@
         <p>This portfolio — right here, right now.</p>
         <span class="connect-hint">YOU ARE HERE ▸</span>
       </a>
-      <a href="tel:09214778825" class="connect-card reveal">
+      <a class="connect-card reveal" data-page="warning">
         <div class="connect-icon">☎</div>
         <h3>PHONE</h3>
         <p>09214778825</p>
@@ -273,7 +272,7 @@
   </footer>
 </main>
 
-<!-- ============ PAGE: WARNING (final page) ============ -->
+<!-- PAGE: WARNING (final page) -->
 <main id="page-warning" class="page">
   <section class="section warning-section">
     <div class="warning-box reveal">
@@ -287,11 +286,9 @@
   </section>
 </main>
 
-<!-- ============ FLOATING PAGE NAV (mobile friendly) ============ -->
-<div class="page-nav" id="pageNav">
-  <button class="page-nav-btn" id="prevBtn" aria-label="Previous page">◀ PREV</button>
-  <button class="page-nav-btn" id="nextBtn" aria-label="Next page">NEXT ▶</button>
-</div>
+<!-- SIDE-CLICK HINTS (About / Skills / Projects only) -->
+<div class="side-hint left" aria-hidden="true"><span>◀</span><small>BACK</small></div>
+<div class="side-hint right" aria-hidden="true"><span>▶</span><small>NEXT</small></div>
 
 <script src="thatone.js"></script>
 </body>
