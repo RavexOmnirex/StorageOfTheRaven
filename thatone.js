@@ -1,6 +1,6 @@
 /* ============================================================
-   JMB://2077 — SYSTEM SCRIPTS v4.1
-   Boot intro / SPA transitions / matrix rain / reveals
+   JMB://2077 — SYSTEM SCRIPTS v4.2
+   Boot intro / SPA transitions / floating nav / matrix rain
    ============================================================ */
 
 /* ---- 0. PAGE NAVIGATION (same tab + cyberpunk transition) ---- */
@@ -10,6 +10,11 @@
   const pages = document.querySelectorAll('.page');
   const nav = document.getElementById('mainNav');
   const boot = document.getElementById('bootIntro');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  // page order for the floating PREV / NEXT buttons
+  const order = ['hero', 'about', 'skills', 'projects', 'connect', 'warning'];
   let current = 'hero';
   let busy = false;
 
@@ -18,12 +23,20 @@
     about: 'DECRYPTING BIOGRAPHY FILE...',
     skills: 'LOADING SKILL MODULES...',
     projects: 'ACCESSING PROJECT ARCHIVE...',
-    connect: 'OPENING UPLINK CHANNEL...'
+    connect: 'OPENING UPLINK CHANNEL...',
+    warning: 'TRACING SIGNAL...'
   };
+
+  function updateNavButtons() {
+    const i = order.indexOf(current);
+    prevBtn.disabled = (i <= 0);
+    nextBtn.disabled = (i >= order.length - 1);
+  }
 
   function activate(name) {
     pages.forEach((p) => p.classList.toggle('active', p.id === 'page-' + name));
     current = name;
+    updateNavButtons();
     // re-trigger reveal animations for the new page
     document.querySelectorAll('#page-' + name + ' .reveal').forEach((el) => {
       el.classList.remove('visible');
@@ -51,6 +64,22 @@
     }, 800);
   };
 
+  prevBtn.addEventListener('click', () => {
+    const i = order.indexOf(current);
+    if (i > 0) navigateTo(order[i - 1]);
+  });
+  nextBtn.addEventListener('click', () => {
+    const i = order.indexOf(current);
+    if (i < order.length - 1) navigateTo(order[i + 1]);
+  });
+
+  // keyboard arrows also work
+  document.addEventListener('keydown', (e) => {
+    if (boot && !boot.classList.contains('hidden')) return;
+    if (e.key === 'ArrowLeft') prevBtn.click();
+    if (e.key === 'ArrowRight') nextBtn.click();
+  });
+
   document.addEventListener('click', (e) => {
     const t = e.target.closest('[data-page]');
     if (!t) return;
@@ -62,7 +91,7 @@
   const log = document.getElementById('bootLog');
   const enter = document.getElementById('bootEnter');
   const lines = [
-    { t: 'JMB://2077 NETRUNNER BIOS v4.1', c: 'b-bold' },
+    { t: 'JMB://2077 NETRUNNER BIOS v4.2', c: 'b-bold' },
     { t: '> CHECKING MEMORY ................ OK [16GB NEURAL]', c: '' },
     { t: '> LOADING COMBAT PROTOCOLS ....... OK', c: '' },
     { t: '> VERIFYING USER IDENTITY ........ <span class="b-red">MATCH FOUND</span>', c: '' },
@@ -92,6 +121,7 @@
     boot.classList.add('glitch-out');
     setTimeout(() => {
       boot.classList.add('hidden');
+      document.body.classList.add('entered');
       nav.style.display = 'flex';
       activate('hero');
     }, 550);
@@ -102,6 +132,8 @@
       enterSite();
     }
   });
+
+  updateNavButtons();
 })();
 
 /* ---- 1. RED MATRIX RAIN BACKGROUND ---- */
