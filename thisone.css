@@ -771,3 +771,115 @@ body.locked { overflow: hidden; }
   .project-card { grid-template-columns: 1fr; }
   .boot-log { font-size: 0.78rem; min-height: 240px; }
 }
+
+
+/* ============================================================
+   v4.2 — FLOATING NAV / PORTRAIT FIX / PCT / WARNING PAGE
+   ============================================================ */
+
+/* ---- FLOATING PREV/NEXT BUTTONS ---- */
+.page-nav {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+  display: none; gap: 18px; z-index: 1500;
+}
+body.entered .page-nav { display: flex; }
+.page-nav-btn {
+  font-family: var(--mono); font-weight: bold; font-size: 0.85rem;
+  letter-spacing: 2px;
+  color: var(--red); background: rgba(13,13,20,0.92);
+  border: 2px solid var(--red);
+  padding: 13px 26px;
+  cursor: pointer;
+  position: relative; overflow: hidden;
+  transition: color 0.3s, box-shadow 0.3s, transform 0.2s;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+.page-nav-btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--red);
+  transform: translateY(101%);
+  transition: transform 0.3s ease;
+  z-index: -1;
+}
+.page-nav-btn:hover { color: #fff; box-shadow: 0 0 25px rgba(255,0,60,0.7); }
+.page-nav-btn:hover::before { transform: translateY(0); }
+.page-nav-btn:active { transform: scale(0.95); }
+.page-nav-btn:disabled {
+  opacity: 0.25; cursor: not-allowed;
+  box-shadow: none; color: var(--red);
+}
+.page-nav-btn:disabled::before { display: none; }
+
+/* ---- GAMBALA PORTRAIT FIX ---- */
+.project-img-wrap.portrait { aspect-ratio: 4 / 5; }
+.project-img-wrap.portrait .project-img { object-fit: cover; object-position: center top; }
+
+/* ---- SKILL PERCENTAGE DISPLAY ---- */
+.skill-pct {
+  font-family: var(--mono); font-weight: bold;
+  font-size: 1.15rem; color: #fff;
+  text-shadow: 0 0 12px var(--red);
+  letter-spacing: 2px;
+}
+.skill-card.visible .skill-pct { animation: pctIn 0.9s ease 0.4s both; }
+@keyframes pctIn {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- WARNING PAGE ---- */
+.warning-section {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding-top: 140px;
+}
+.warning-box {
+  max-width: 640px; width: 100%;
+  text-align: center;
+  background: var(--bg-panel);
+  border: 1px solid rgba(255, 60, 0, 0.55);
+  box-shadow: 0 0 45px rgba(255, 60, 0, 0.18), inset 0 0 60px rgba(255, 60, 0, 0.05);
+  padding: 55px 45px 60px;
+  clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));
+}
+.warn-triangle {
+  font-size: 4.5rem; line-height: 1;
+  color: #ffb800;
+  text-shadow: 0 0 25px rgba(255,184,0,0.8);
+  animation: warnPulse 1.6s ease-in-out infinite;
+  margin-bottom: 22px;
+}
+@keyframes warnPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.12); opacity: 0.75; }
+}
+.warn-title {
+  font-size: clamp(1.5rem, 4vw, 2.3rem);
+  font-weight: 900; letter-spacing: 4px;
+  margin-bottom: 12px;
+}
+.warn-code {
+  font-family: var(--mono); font-size: 0.8rem;
+  color: #ffb800; letter-spacing: 3px;
+  margin-bottom: 28px;
+}
+.warn-msg {
+  font-size: 1.35rem; font-weight: 700;
+  color: var(--red-soft);
+  text-shadow: 0 0 14px rgba(255,0,60,0.6);
+  margin-bottom: 16px;
+}
+.warn-sub {
+  color: var(--text-dim); font-size: 0.95rem; line-height: 1.75;
+  margin-bottom: 38px;
+}
+.btn-home { font-size: 0.9rem; }
+
+/* mobile: keep floating nav above content, smaller tap targets */
+@media (max-width: 600px) {
+  .page-nav { bottom: 14px; gap: 12px; width: max-content; }
+  .page-nav-btn { padding: 12px 20px; font-size: 0.78rem; }
+  .warning-box { padding: 40px 26px 45px; }
+  .project-img-wrap.portrait { aspect-ratio: auto; }
+  .project-img-wrap.portrait .project-img { object-fit: contain; background: #000; }
+}
