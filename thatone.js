@@ -1,20 +1,23 @@
 /* ============================================================
-   JMB://2077 — SYSTEM SCRIPTS v4.2
-   Boot intro / SPA transitions / floating nav / matrix rain
+   JMB://2077 — SYSTEM SCRIPTS v4.3
+   Boot intro / SPA transitions / side-click nav / matrix rain
    ============================================================ */
 
-/* ---- 0. PAGE NAVIGATION (same tab + cyberpunk transition) ---- */
+/* ---- 0. PAGE NAVIGATION ---- */
 (function () {
   const overlay = document.getElementById('transition');
   const label = document.getElementById('tLabel');
   const pages = document.querySelectorAll('.page');
   const nav = document.getElementById('mainNav');
   const boot = document.getElementById('bootIntro');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
 
-  // page order for the floating PREV / NEXT buttons
+  // page order (used by the side-click navigation)
   const order = ['hero', 'about', 'skills', 'projects', 'connect', 'warning'];
+
+  // side-click (left = back, right = next) works ONLY on these pages.
+  // Home, Connect and Warning only use their own buttons.
+  const sideNavPages = ['about', 'skills', 'projects'];
+
   let current = 'hero';
   let busy = false;
 
@@ -27,17 +30,21 @@
     warning: 'TRACING SIGNAL...'
   };
 
-  function updateNavButtons() {
-    const i = order.indexOf(current);
-    prevBtn.disabled = (i <= 0);
-    nextBtn.disabled = (i >= order.length - 1);
+  const bootOpen = () => boot && !boot.classList.contains('hidden');
+  const sideOn = () => !bootOpen() && sideNavPages.includes(current);
+
+  // top nav bar + side hints only appear on side-click pages
+  function updateChrome() {
+    const on = sideNavPages.includes(current);
+    nav.classList.toggle('is-hidden', !on);
+    document.body.classList.toggle('side-nav-on', on);
+    document.body.classList.remove('cursor-back', 'cursor-next');
   }
 
   function activate(name) {
     pages.forEach((p) => p.classList.toggle('active', p.id === 'page-' + name));
     current = name;
-    updateNavButtons();
-    // re-trigger reveal animations for the new page
+    updateChrome();
     document.querySelectorAll('#page-' + name + ' .reveal').forEach((el) => {
       el.classList.remove('visible');
       void el.offsetWidth; // reflow to restart animation
@@ -56,7 +63,6 @@
     overlay.classList.remove('play');
     void overlay.offsetWidth;
     overlay.classList.add('play');
-    // swap page mid-transition, while bars cover the screen
     setTimeout(() => activate(name), 280);
     setTimeout(() => {
       overlay.classList.remove('play');
@@ -64,27 +70,40 @@
     }, 800);
   };
 
-  prevBtn.addEventListener('click', () => {
-    const i = order.indexOf(current);
-    if (i > 0) navigateTo(order[i - 1]);
-  });
-  nextBtn.addEventListener('click', () => {
-    const i = order.indexOf(current);
-    if (i < order.length - 1) navigateTo(order[i + 1]);
-  });
+  function step(dir) {
+    const target = order[order.indexOf(current) + dir];
+    if (target) navigateTo(target);
+  }
 
-  // keyboard arrows also work
+  // true if the element is a button / link / card that has its own behaviour
+  const isInteractive = (el) => !!el.closest('a, button, [data-page], .skill-card, .nav');
+
+  // keyboard arrows follow the same rule as side-click
   document.addEventListener('keydown', (e) => {
-    if (boot && !boot.classList.contains('hidden')) return;
-    if (e.key === 'ArrowLeft') prevBtn.click();
-    if (e.key === 'ArrowRight') nextBtn.click();
+    if (!sideOn()) return;
+    if (e.key === 'ArrowLeft') step(-1);
+    if (e.key === 'ArrowRight') step(1);
   });
 
+  // buttons first; otherwise left half of the screen = back, right half = next
   document.addEventListener('click', (e) => {
     const t = e.target.closest('[data-page]');
-    if (!t) return;
-    e.preventDefault();
-    navigateTo(t.dataset.page);
+    if (t) {
+      e.preventDefault();
+      navigateTo(t.dataset.page);
+      return;
+    }
+    if (!sideOn() || isInteractive(e.target)) return;
+    if (window.getSelection().toString()) return; // user is selecting text
+    step(e.clientX < window.innerWidth / 2 ? -1 : 1);
+  });
+
+  // arrow cursor + glowing hint on the side the mouse is on
+  document.addEventListener('mousemove', (e) => {
+    const on = sideOn() && !isInteractive(e.target);
+    const left = e.clientX < window.innerWidth / 2;
+    document.body.classList.toggle('cursor-back', on && left);
+    document.body.classList.toggle('cursor-next', on && !left);
   });
 
   /* ---- BOOT SEQUENCE ---- */
@@ -117,23 +136,20 @@
   setTimeout(bootLine, 500);
 
   function enterSite() {
-    if (!boot || boot.classList.contains('hidden')) return;
+    if (!bootOpen()) return;
     boot.classList.add('glitch-out');
     setTimeout(() => {
       boot.classList.add('hidden');
       document.body.classList.add('entered');
-      nav.style.display = 'flex';
       activate('hero');
     }, 550);
   }
   boot.addEventListener('click', enterSite);
-  document.addEventListener('keydown', function onKey(e) {
-    if (e.key === 'Enter' && boot && !boot.classList.contains('hidden')) {
-      enterSite();
-    }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && bootOpen()) enterSite();
   });
 
-  updateNavButtons();
+  updateChrome();
 })();
 
 /* ---- 1. RED MATRIX RAIN BACKGROUND ---- */
